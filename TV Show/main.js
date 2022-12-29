@@ -1,5 +1,14 @@
 const body = document.body;
 
+const getData = async () => {
+	const response = await fetch("https://api.tvmaze.com/shows/82/episodes");
+	const data = await response.json();
+
+	data.forEach((each) => {
+		repeatCards(each);
+	});
+};
+
 const loadHeaderElements = () => {
 	// Header
 	const header = document.createElement("header");
@@ -35,6 +44,11 @@ const loadHeaderElements = () => {
 };
 
 const loadMainElements = () => {
+	// H1 title
+	const h1Title = document.createElement("h1");
+	h1Title.className = "main-title";
+	h1Title.innerText = "Watch Game Of Thrones Here";
+
 	// Main
 	const main = document.createElement("main");
 
@@ -42,16 +56,20 @@ const loadMainElements = () => {
 	const episodes = document.createElement("div");
 	episodes.className = "episodes";
 
-	// Card
+	main.prepend(h1Title);
+	main.append(episodes);
+	body.querySelector("header").insertAdjacentElement("afterend", main);
+};
+
+function repeatCards(eachElement) {
 	const card = document.createElement("div");
 	card.classList = "card";
 
 	// Poster "IMG"
 	const poster = document.createElement("img");
-	poster.src =
-		"https://ntvb.tmsimg.com/assets/p8282918_b_h8_bn.jpg?w=960&h=540";
+	poster.src = eachElement.image.medium;
 	poster.className = "card__img";
-	poster.alt = null;
+	poster.alt = eachElement.name;
 
 	// Card Infos
 	const cardInfo = document.createElement("div");
@@ -64,33 +82,51 @@ const loadMainElements = () => {
 	// Card Title
 	const cardTitle = document.createElement("h3");
 	cardTitle.className = "card__information-title";
-	cardTitle.innerText = undefined;
+	cardTitle.innerText = eachElement.name;
 
 	// Seasons and Episode Names
 	const seInfo = document.createElement("h4");
 	seInfo.className = "card__information-se";
-	seInfo.innerText = undefined;
+	seInfo.innerText = `S${String(eachElement.season).padStart(2, "0")}E${String(
+		eachElement.number
+	).padStart(2, "0")}`;
 
 	// Description
 	const descText = document.createElement("p");
 	descText.className = "description__par";
-	descText.innerText = undefined;
+	descText.innerText = eachElement.summary;
+	descText.innerText = descText.innerText
+		.replaceAll("<p>", "")
+		.replaceAll("</p>", "")
+		.replaceAll("<br>", "");
+	descText.innerText = descText.innerText.substring(0, 70) + "...";
 
-	// BTN
+	// Direct Link
 	const cardBtn = document.createElement("a");
 	cardBtn.classList = "watch-btn";
 	cardBtn.innerText = "Watch";
-	cardBtn.href = undefined;
-};
+	cardBtn.href = eachElement.url;
+
+	cardInformation.append(cardTitle);
+	cardInformation.append(seInfo);
+	cardInfo.append(cardInformation);
+	cardInfo.append(descText);
+	cardInfo.append(cardBtn);
+	card.append(poster);
+	card.append(cardInfo);
+	body.querySelector(".episodes").append(card);
+}
 
 const loadFooterElement = () => {
 	// Footer
 	const footer = document.createElement("footer");
 	footer.className = "footer";
 	body.querySelector("main").insertAdjacentElement("afterend", footer);
+
 	// License Text
 	const licenseText = document.createElement("p");
 	licenseText.classList = "tvmaze-api-license";
+
 	// Anchor
 	const anchor = document.createElement("a");
 	anchor.innerText = "This website is made possible using TVmaze Api";
@@ -98,6 +134,7 @@ const loadFooterElement = () => {
 	anchor.target = "_blank";
 	licenseText.append(anchor);
 	footer.append(licenseText);
+
 	// Author
 	const author = document.createElement("p");
 	author.classList = "author";
@@ -106,5 +143,29 @@ const loadFooterElement = () => {
 };
 
 loadHeaderElements();
+
 loadMainElements();
+
 loadFooterElement();
+
+getData();
+
+// Search
+let searchInput = document.querySelector(".searchbar");
+
+searchInput.addEventListener("input", () => {
+	const cards = document.querySelectorAll(".card");
+	let value = searchInput.value.toLowerCase();
+
+	cards.forEach((eachCard) => {
+		const titleOfCard = eachCard
+			.querySelector(".card__information-title")
+			.innerText.toLowerCase();
+
+		if (titleOfCard.includes(value)) {
+			eachCard.classList.remove("hide");
+		} else {
+			eachCard.classList.add("hide");
+		}
+	});
+});
