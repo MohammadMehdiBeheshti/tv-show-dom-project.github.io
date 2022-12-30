@@ -2,11 +2,13 @@ const body = document.body;
 
 const getData = async () => {
 	const response = await fetch("https://api.tvmaze.com/shows/82/episodes");
-	const data = await response.json();
+	let data = await response.json();
 
-	data.forEach((each) => {
-		repeatCards(each);
-	});
+	// data.forEach((each) => {
+	// 	repeatCards(each);
+	// });
+
+	repeatCards(data);
 };
 
 const loadHeaderElements = () => {
@@ -61,61 +63,98 @@ const loadMainElements = () => {
 	body.querySelector("header").insertAdjacentElement("afterend", main);
 };
 
-function repeatCards(eachElement) {
-	const card = document.createElement("div");
-	card.classList = "card";
+const repeatCards = (dataStorage) => {
+	let dataStore = [...dataStorage];
+	const navigation = document.querySelector(".navigation");
 
-	// Poster "IMG"
-	const poster = document.createElement("img");
-	poster.src = eachElement.image.medium;
-	poster.className = "card__img";
-	poster.alt = eachElement.name;
+	const firstOption = document.createElement("option");
+	firstOption.innerText = "Choose Episode";
+	firstOption.setAttribute("selected", "selected");
+	firstOption.setAttribute("disabled", "disabled");
 
-	// Card Infos
-	const cardInfo = document.createElement("div");
-	cardInfo.className = "card-info";
+	// Select Episode
+	const select = document.createElement("select");
+	select.className = "select-episode";
 
-	// Card Information
-	const cardInformation = document.createElement("div");
-	cardInformation.className = "card__information";
+	select.prepend();
 
-	// Card Title
-	const cardTitle = document.createElement("h3");
-	cardTitle.className = "card__information-title";
-	cardTitle.innerText = eachElement.name;
+	dataStore.forEach((each) => {
+		// Options
+		const option = document.createElement("option");
+		option.className = "episode-option";
+		option.innerText = `${each.name} : S${String(each.season).padStart(
+			2,
+			"0"
+		)}E${String(each.number).padStart(2, "0")}`;
+		option.value = each.url;
+		select.append(option);
+	});
+	select.prepend(firstOption);
+	navigation.append(select);
 
-	// Seasons and Episode Names
-	const seInfo = document.createElement("h4");
-	seInfo.className = "card__information-se";
-	seInfo.innerText = `S${String(eachElement.season).padStart(2, "0")}E${String(
-		eachElement.number
-	).padStart(2, "0")}`;
+	select.addEventListener("change", () => {
+		if (select.value !== firstOption.value) {
+			window.open(select.value);
+		}
+	});
 
-	// Description
-	const descText = document.createElement("p");
-	descText.className = "description__par";
-	descText.innerText = eachElement.summary;
-	descText.innerText = descText.innerText
-		.replaceAll("<p>", "")
-		.replaceAll("</p>", "")
-		.replaceAll("<br>", "");
-	descText.innerText = descText.innerText.substring(0, 70) + "...";
+	dataStorage.forEach((eachElement) => {
+		const card = document.createElement("div");
+		card.classList = "card";
 
-	// Direct Link
-	const cardBtn = document.createElement("a");
-	cardBtn.classList = "watch-btn";
-	cardBtn.innerText = "Watch";
-	cardBtn.href = eachElement.url;
+		// Poster "IMG"
+		const poster = document.createElement("img");
+		poster.src = eachElement.image.medium;
+		poster.className = "card__img";
+		poster.alt = eachElement.name;
 
-	cardInformation.append(cardTitle);
-	cardInformation.append(seInfo);
-	cardInfo.append(cardInformation);
-	cardInfo.append(descText);
-	cardInfo.append(cardBtn);
-	card.append(poster);
-	card.append(cardInfo);
-	body.querySelector(".episodes").append(card);
-}
+		// Card Infos
+		const cardInfo = document.createElement("div");
+		cardInfo.className = "card-info";
+
+		// Card Information
+		const cardInformation = document.createElement("div");
+		cardInformation.className = "card__information";
+
+		// Card Title
+		const cardTitle = document.createElement("h3");
+		cardTitle.className = "card__information-title";
+		cardTitle.innerText = eachElement.name;
+
+		// Seasons and Episode Names
+		const seInfo = document.createElement("h4");
+		seInfo.className = "card__information-se";
+		seInfo.innerText = `S${String(eachElement.season).padStart(
+			2,
+			"0"
+		)}E${String(eachElement.number).padStart(2, "0")}`;
+
+		// Description
+		const descText = document.createElement("p");
+		descText.className = "description__par";
+		descText.innerText = eachElement.summary;
+		descText.innerText = descText.innerText
+			.replaceAll("<p>", "")
+			.replaceAll("</p>", "")
+			.replaceAll("<br>", "");
+		descText.innerText = descText.innerText.substring(0, 70) + "...";
+
+		// Direct Link
+		const cardBtn = document.createElement("a");
+		cardBtn.classList = "watch-btn";
+		cardBtn.innerText = "Watch";
+		cardBtn.href = eachElement.url;
+
+		cardInformation.append(cardTitle);
+		cardInformation.append(seInfo);
+		cardInfo.append(cardInformation);
+		cardInfo.append(descText);
+		cardInfo.append(cardBtn);
+		card.append(poster);
+		card.append(cardInfo);
+		body.querySelector(".episodes").append(card);
+	});
+};
 
 const loadFooterElement = () => {
 	// Footer

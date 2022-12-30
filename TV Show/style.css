@@ -76,6 +76,17 @@ body {
 	color: #ffffff;
 }
 
+.select-episode {
+	width: 20rem;
+	height: 2.5rem;
+	font-family: sg-sb;
+	font-size: 1.6rem;
+	text-align: left;
+	border: none;
+	border-radius: 0.5rem;
+	outline: none;
+}
+
 .main-title {
 	font-family: sg-b;
 	margin-bottom: 4rem;
@@ -153,6 +164,13 @@ body {
 	border: none;
 	text-decoration: none;
 	cursor: pointer;
+	transition: all 200ms ease-in-out;
+}
+
+.watch-btn:hover {
+	color: #ffffff;
+	background-color: #000000;
+	border: 0.2rem solid #ffffff;
 }
 
 .footer {
@@ -172,7 +190,7 @@ body {
 
 .tvmaze-api-license {
 	font-family: sg-b;
-	font-size: 2rem;
+	font-size: 2.5rem;
 	margin-bottom: 1rem;
 }
 
@@ -183,8 +201,8 @@ body {
 
 .author {
 	font-family: sg-sb;
-	font-size: 1.2rem;
-	margin-bottom: 7rem;
+	font-size: 1.6rem;
+	margin-bottom: 6rem;
 }
 
 .hide {
