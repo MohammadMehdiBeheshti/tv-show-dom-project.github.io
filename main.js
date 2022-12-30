@@ -4,10 +4,6 @@ const getData = async () => {
 	const response = await fetch("https://api.tvmaze.com/shows/82/episodes");
 	let data = await response.json();
 
-	// data.forEach((each) => {
-	// 	repeatCards(each);
-	// });
-
 	repeatCards(data);
 };
 
