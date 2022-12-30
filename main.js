@@ -76,8 +76,6 @@ const repeatCards = (dataStorage) => {
 	const select = document.createElement("select");
 	select.className = "select-episode";
 
-	select.prepend();
-
 	dataStore.forEach((each) => {
 		// Options
 		const option = document.createElement("option");
